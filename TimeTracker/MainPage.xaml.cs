@@ -1,24 +1,39 @@
-﻿namespace TimeTracker;
+﻿using System.Diagnostics;
+
+namespace TimeTracker;
 
 public partial class MainPage : ContentPage
 {
-    int count = 0;
+    public IWorkItem ActiveWorkItem { get; set; }
 
-    public MainPage()
+    public MainPage()   //set default ActiveWorkItem (misc?) so no random lost time?
     {
         InitializeComponent();
+        combobox.ItemsSource = new object[] { "apple", "dog", "money" };
     }
 
-    private void OnCounterClicked(object sender, EventArgs e)
+    private void combobox_SelectedItemChanged(object sender, EventArgs e) { }
+
+    private void OnTaskStartTime(object sender, EventArgs e)
     {
-        count++;
+        ActiveWorkItem.StartTime();
 
-        if (count == 1)
-            CounterBtn.Text = $"Clicked {count} time";
-        else
-            CounterBtn.Text = $"Clicked {count} times";
+        Debug.WriteLine($"OnTaskStartTime: {DateTime.Now}");
+    }
 
-        SemanticScreenReader.Announce(CounterBtn.Text);
+    private void OnTaskEndTime(object sender, EventArgs e)
+    {
+        ActiveWorkItem.EndTime();
+
+        Debug.WriteLine($"OnTaskEndTime: {DateTime.Now}");
+    }
+
+    private void OnNextTaskStartTime(object sender, EventArgs e)
+    {
+        ActiveWorkItem.EndTime();
+        //TODO: Set NEW ActiveWorkItem.StartTime();
+        ActiveWorkItem.StartTime();
+
+        Debug.WriteLine($"OnNextTaskStartTime: {DateTime.Now}");
     }
 }
-
